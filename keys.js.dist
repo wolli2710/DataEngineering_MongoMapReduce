@@ -1,0 +1,6 @@
+module.exports = {
+    consumer_key: 'val',
+    consumer_secret: 'val',
+    access_token_key: 'val',
+    access_token_secret: 'val'
+};
