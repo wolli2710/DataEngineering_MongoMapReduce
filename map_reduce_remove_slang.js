@@ -1,39 +1,29 @@
 var mongo = require('mongojs');
 var fs = require('fs');
-
 var db = mongo('zwitscha');
-
 var tweets = db.collection('tweets');
-var deslanged_tweets = db.collection('deslanged_tweets');
-
 
 var mapTask2 = function() {
-    emit(this._id, {"geo":this.geo, "text":this.text.split(" ")});
-};
-
-var finalizeTask2 = function(keys, values) {
-    newStr = "";
-    var txtArr = values.text;
-
-    for(var i = 0; i<txtArr.length; i++){
-        if(txtArr[i] in slangD){
-            newStr += slangD[txtArr[i]];
-        } else {
-            newStr += txtArr[i];
-        }
-        if(i < txtArr.length-1){
-            newStr += " ";
-        }
+    var wordArr = this.text.split(" ");
+    for(var i = 0; i < wordArr.length; i++){
+        emit( this._id, { "geo":this.geo, "text":wordArr[i] });
     }
-
-    return {"geo":values.geo, "text":newStr};
 };
 
 var reduceTask2 = function(keys, values) {
-    return values;
+    var wordArr = [];
+    
+    for(var i = 0; i<values.length; i++){
+        if(values[i].text in slangD){
+            wordArr.push(slangD[values[i].text]);
+        }else{
+            wordArr.push(values[i].text);
+        }
+    }
+    return { "geo":values[0].geo, "text":wordArr.join(" ") };
 };
 
-fs.readFile("slangdict.csv", "utf-8", function(err, data){
+fs.readFile("data/slangdict.csv", "utf-8", function(err, data){
     var slangDict = {};
     var lines = data.trim().split('\n');
     for(var i = 0; i<lines.length; i++){
@@ -42,13 +32,10 @@ fs.readFile("slangdict.csv", "utf-8", function(err, data){
     }
 
     tweets.mapReduce(mapTask2,
-                     reduceTask2,
-                     {
-                         out: "deslanged_tweets",
-                         finalize: finalizeTask2,
-                         scope: { slangD: slangDict }
-                     });
-
+                    reduceTask2,
+                    {
+                        out: "deslanged_tweets",
+                        scope: { slangD: slangDict }
+                    });
     db.close()
 });
-

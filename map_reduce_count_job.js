@@ -14,22 +14,10 @@ var reduceTask1 = function(keys, values) {
     return Array.sum(values);
 };
 
-var finalizeTask1 = function(keys, values){
-    return values;
-}
-
-tweet_count.find().forEach(function(err, doc){
-    if(!doc){
-        return;
-    }
-    console.log(doc)
-});
-
 tweets.mapReduce(mapTask1,
                 reduceTask1,
                 {
                     out: "twitter_count",
-                    finalize: finalizeTask1
                 });
 
 
