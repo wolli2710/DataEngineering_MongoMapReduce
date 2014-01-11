@@ -27,7 +27,12 @@ this could take a while
 "node twitter_sentiment_dict_creation.js"
 11. make sure to have an internet connection,    
 go to the views folder and open the file "index.html"
+now you should see something like the following image
 
-### The blue Markers are neutral
-### The red Markers got a negative sentiment score
-### The green Markers got a positive sentiment score
+<img width="980" src="data_engineering.PNG">
+
+this image contains 16886 markers that represent tweets with the following sentiments:
+
+###### The blue Markers are neutral
+###### The red Markers got a negative sentiment score
+###### The green Markers got a positive sentiment score
